@@ -3,7 +3,7 @@
 @version: 1.0
 @Author: Chandler Lu
 @Date: 2020-03-14 22:14:24
-@LastEditTime: 2020-03-14 23:43:28
+@LastEditTime: 2020-03-15 11:13:01
 '''
 
 import json
@@ -23,13 +23,10 @@ def json_to_md(work_path, ticks):
         '''
         book_md = '# ' + name + '\n' + '## ' + writer + '\n'
 
-        '''
-        正文内容
-        '''
         for j in range(len(book_json[i]['note'])):
             if book_json[i]['note'][j]['body'] != '':
                 book_md = book_md + '> ' + \
-                    book_json[i]['note'][j]['body'] + '\n\n'  # 正文
+                    book_json[i]['note'][j]['body'] + '\n\n' # 正文
             else:
                 continue
             book_md = book_md + 'TIME: ' + \

@@ -3,8 +3,9 @@
 @version: 1.0
 @Author: Chandler Lu
 @Date: 2020-03-14 15:54:28
-@LastEditTime: 2020-03-14 23:43:44
+@LastEditTime: 2020-03-15 12:34:51
 '''
+# -*- coding: utf-8 -*-
 
 import re
 import sys
@@ -80,16 +81,22 @@ def get_book_message(text):
     count = 0
     book_data = []
     stack = Stack()
-    first_line = re.match(r'[\s\S]+(\))', text).group()
+    first_line = re.match(r'[\s\S]+(?=(\n|\r)-)', text).group()
     for i in range(len(first_line), 0, -1):
-        if first_line[i - 1] is ')' or first_line[i - 1] is '）':
+        if first_line[i - 1] == ')' or first_line[i - 1] == '）':
             stack.push(first_line[i - 1])
             count += 1
-        if first_line[i - 1] is '(' or first_line[i - 1] is '（':
+        if first_line[i - 1] == '(' or first_line[i - 1] == '（':
             count -= 1
         if i != (len(first_line) - 1) and count == 0:
             writer_split = i
             break
+
+    '''
+    TODO: 学习 BOM 问题处理
+    '''
+    book_name = first_line[:(writer_split - 2)
+                           ].encode('utf-8').decode('utf-8-sig')
 
     second_line = re.search(r'(- [\s\S]+)(?=(\r|\n))', text).group()
     try:
@@ -124,7 +131,7 @@ def get_book_message(text):
 
     body = re.search(r'(.*)$', text).group()
 
-    book_data.insert(NAME_LOC, first_line[:(writer_split - 2)])
+    book_data.insert(NAME_LOC, book_name)
     book_data.insert(WRITER_LOC, first_line[writer_split:-1])
     book_data.insert(PAGE_LOC, book_page)
     book_data.insert(START_LOC, content_start)
@@ -178,13 +185,21 @@ if __name__ == '__main__':
     '''
     My Clippings 读取
     '''
-    with open(clip_path, 'r') as k:
-        kindle_clip = k.read()
+    try:
+        with open(clip_path) as k:
+            kindle_clip = k.read()
+    except FileNotFoundError:
+        print('文件路径不对哦 (〃⁠＾⁠▽⁠＾⁠〃)')
+        sys.exit(0)
 
     first_clip = re.match(r'([\s\S]+?)(?=\n==========)', kindle_clip)
     clip = re.findall(
         r'(?<===========[\n|\r])([\S\s]+?)(?=\n==========)', kindle_clip)   # Other Clip
-    clip.insert(0, first_clip.group())  # All Clip
+    try:
+        clip.insert(0, first_clip.group())  # All Clip
+    except AttributeError:
+        print('您的书读的太少了，没有读取到标注哦 凸⁠(•̀△•́⁠＋)')
+        sys.exit(0)
 
     for i in range(len(clip)):
         get_book_message(clip[i])
