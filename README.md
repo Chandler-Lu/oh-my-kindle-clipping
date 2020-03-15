@@ -10,6 +10,6 @@
 
 ```bash
 > cd oh-my-kindle-clipping
-> python3 ./run.py ./My\ Clippings.txt
+> python3 run.py "My Clippings.txt"
 ```
 
