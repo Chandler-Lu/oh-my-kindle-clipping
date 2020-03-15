@@ -1,17 +1,18 @@
 '''
 @Description: Oh My Kindle Clipping
-@version: 1.0
+@version: 1.2
 @Author: Chandler Lu
 @Date: 2020-03-14 15:54:28
-@LastEditTime: 2020-03-15 12:44:44
+@LastEditTime: 2020-03-15 13:48:53
 '''
 # -*- coding: utf-8 -*-
 
-import re
 import sys
 import os
+
 import datetime
 import time
+import re
 import json
 import copy
 import json2md as jmd
@@ -169,7 +170,8 @@ def output_json(all_book_name):
         all_book_list.append(current_book_json)
 
     with open(os.path.join(work_path, str(ticks), 'book-' + str(ticks) + '.json'), 'w') as f:
-        print(json.dumps(all_book_list, ensure_ascii=False), file=f)
+        print(json.dumps(all_book_list), file=f)
+        # print(json.dumps(all_book_list, ensure_ascii=False), file=f)
 
 
 if __name__ == '__main__':

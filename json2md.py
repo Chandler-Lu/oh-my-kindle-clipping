@@ -1,15 +1,17 @@
 '''
 @Description: Kindle Clippings to Markdown from JSON
-@version: 1.0
+@version: 1.2
 @Author: Chandler Lu
 @Date: 2020-03-14 22:14:24
-@LastEditTime: 2020-03-15 11:13:01
+@LastEditTime: 2020-03-15 13:49:03
 '''
 
-import json
 import os
 import time
 import datetime
+import json
+import re
+
 
 def json_to_md(work_path, ticks):
     book_md = ''
@@ -18,6 +20,9 @@ def json_to_md(work_path, ticks):
     for i in range(len(book_json)):
         name = book_json[i]['name']
         writer = book_json[i]['writer']
+        # Windows 不支持的文件命名
+        file_name = re.sub(
+            r'(\\)|(\/)|(\:)|(\*)|(\?)|(\")|(\<)|(\>)|(\|)', '-', name)
         '''
         书名作者
         '''
@@ -26,7 +31,7 @@ def json_to_md(work_path, ticks):
         for j in range(len(book_json[i]['note'])):
             if book_json[i]['note'][j]['body'] != '':
                 book_md = book_md + '> ' + \
-                    book_json[i]['note'][j]['body'] + '\n\n' # 正文
+                    book_json[i]['note'][j]['body'] + '\n\n'  # 正文
             else:
                 continue
             book_md = book_md + 'TIME: ' + \
@@ -44,7 +49,6 @@ def json_to_md(work_path, ticks):
                     str(book_json[i]['note'][j]['content_end']) + \
                     '\n\n'  # 终止位置
             else:
-                book_md = book_md +'\n\n'
-        with open(os.path.join(work_path, str(ticks), name + '.md'), 'w') as f:
+                book_md = book_md + '\n\n'
+        with open(os.path.join(work_path, str(ticks), file_name + '.md'), 'w') as f:
             print(book_md, file=f)
-
