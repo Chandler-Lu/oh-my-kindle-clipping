@@ -3,7 +3,7 @@
 @version: 1.0
 @Author: Chandler Lu
 @Date: 2020-03-14 15:54:28
-@LastEditTime: 2020-03-15 12:34:51
+@LastEditTime: 2020-03-15 12:44:44
 '''
 # -*- coding: utf-8 -*-
 
@@ -186,7 +186,7 @@ if __name__ == '__main__':
     My Clippings 读取
     '''
     try:
-        with open(clip_path) as k:
+        with open(clip_path, encoding='utf-8-sig') as k:
             kindle_clip = k.read()
     except FileNotFoundError:
         print('文件路径不对哦 (〃⁠＾⁠▽⁠＾⁠〃)')
