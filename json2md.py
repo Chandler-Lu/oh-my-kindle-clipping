@@ -1,6 +1,5 @@
 '''
 @Description: Kindle Clippings to Markdown from JSON
-@version: 1.2
 @Author: Chandler Lu
 @Date: 2020-03-14 22:14:24
 @LastEditTime: 2020-03-17 19:43:28

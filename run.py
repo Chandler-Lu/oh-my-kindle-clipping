@@ -1,9 +1,9 @@
 '''
 @Description: Oh My Kindle Clipping
-@version: 1.2
+@version: 2.0
 @Author: Chandler Lu
 @Date: 2020-03-14 15:54:28
-@LastEditTime: 2020-03-17 21:49:10
+@LastEditTime: 2020-03-17 21:52:15
 '''
 # -*- coding: utf-8 -*-
 
