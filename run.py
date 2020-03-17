@@ -3,7 +3,7 @@
 @version: 2.0
 @Author: Chandler Lu
 @Date: 2020-03-14 15:54:28
-@LastEditTime: 2020-03-17 21:52:15
+@LastEditTime: 2020-03-17 22:05:05
 '''
 # -*- coding: utf-8 -*-
 
@@ -196,9 +196,9 @@ if __name__ == '__main__':
     '''
     work_path = os.getcwd()
     clip_path = sys.argv[1]
-    all_book_name = []  # 存储所有数据的名称
+    all_book_name = []  # 存储所有书目的名称
     all_book_data = []  # 存储所有书目的原始数据
-    all_book_list = []  # 存储所有数目的 json 数据
+    all_book_list = []  # 存储所有书目的 json 数据
     ticks = int(time.time())
 
     '''
