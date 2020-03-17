@@ -3,7 +3,7 @@
 @version: 1.2
 @Author: Chandler Lu
 @Date: 2020-03-14 22:14:24
-@LastEditTime: 2020-03-15 13:49:03
+@LastEditTime: 2020-03-17 19:43:28
 '''
 
 import os
@@ -26,29 +26,27 @@ def json_to_md(work_path, ticks):
         '''
         书名作者
         '''
-        book_md = '# ' + name + '\n' + '## ' + writer + '\n'
+        book_md = '# ' + name + '\n\n' + '## ' + writer + '\n\n'
 
         for j in range(len(book_json[i]['note'])):
             if book_json[i]['note'][j]['body'] != '':
-                book_md = book_md + '> ' + \
-                    book_json[i]['note'][j]['body'] + '\n\n'  # 正文
+                book_md = book_md + str(time.strftime("%Y-%m-%d %a %H:%M", time.localtime(
+                    book_json[i]['note'][j]['time']))) + ' | '  # 时间
+                if book_json[i]['note'][j]['page'] != -1:
+                    book_md = book_md + 'P' + \
+                        str(book_json[i]['note'][j]['page']) + ' | '  # 页码
+                if book_json[i]['note'][j]['content_start'] != -1:
+                    book_md = book_md + '#' + \
+                        str(book_json[i]['note'][j]
+                            ['content_start']) + '-'  # 起始位置
+                if book_json[i]['note'][j]['content_end'] != -1:
+                    book_md = book_md + \
+                        str(book_json[i]['note'][j]
+                            ['content_end']) + '\n\n'  # 终止位置
+                else:
+                    book_md = book_md + '\n\n'
+                book_md = book_md  + '**' + book_json[i]['note'][j]['body'] + '**'+ '\n\n'  # 正文
             else:
                 continue
-            book_md = book_md + 'TIME: ' + \
-                str(time.strftime("%Y-%m-%d %H:%M",
-                                  time.localtime(book_json[i]['note'][j]['time']))) + '  '  # 时间
-            if book_json[i]['note'][j]['page'] != -1:
-                book_md = book_md + 'PAGE: ' + \
-                    str(book_json[i]['note'][j]['page']) + '  '  # 页码
-            if book_json[i]['note'][j]['content_start'] != -1:
-                book_md = book_md + 'LOC: #' + \
-                    str(book_json[i]['note'][j]['content_start']) + \
-                    '-'  # 起始位置
-            if book_json[i]['note'][j]['content_end'] != -1:
-                book_md = book_md + \
-                    str(book_json[i]['note'][j]['content_end']) + \
-                    '\n\n'  # 终止位置
-            else:
-                book_md = book_md + '\n\n'
         with open(os.path.join(work_path, str(ticks), file_name + '.md'), 'w') as f:
             print(book_md, file=f)

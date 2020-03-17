@@ -3,7 +3,7 @@
 @version: 1.2
 @Author: Chandler Lu
 @Date: 2020-03-14 15:54:28
-@LastEditTime: 2020-03-15 13:48:53
+@LastEditTime: 2020-03-17 07:55:16
 '''
 # -*- coding: utf-8 -*-
 
@@ -56,23 +56,18 @@ note_json = {
 class Stack(object):
     def __init__(self):
         self._val = []
-    # 压入元素
 
     def push(self, val):
         self._val.append(val)
-    # 弹出元素,而且会删除
 
     def pop(self):
         return self._val.pop()
-    # 返回栈顶元素
 
     def peek(self):
         return self._val[self.size()-1]
-    # 判断是否为空
 
     def is_empty(self):
         return self._val == None
-    # 返回元素个数
 
     def size(self):
         return len(self._val)
@@ -164,6 +159,7 @@ def output_json(all_book_name):
                 current_note_json['time'] = all_book_data[j][TIME_LOC]
                 current_note_json['body'] = all_book_data[j][BODY_LOC]
                 current_book_json['note'].append(current_note_json)
+                # TODO: 解决重复赋值问题
                 current_book_json['writer'] = all_book_data[j][WRITER_LOC]
                 count += 1
         current_book_json['num'] = count
