@@ -3,7 +3,7 @@
 @version: 1.2
 @Author: Chandler Lu
 @Date: 2020-03-14 15:54:28
-@LastEditTime: 2020-03-17 07:55:16
+@LastEditTime: 2020-03-17 21:49:10
 '''
 # -*- coding: utf-8 -*-
 
@@ -21,19 +21,23 @@ import json2md as jmd
 宏定义
 '''
 
-NAME_LOC = 0
-WRITER_LOC = 1
-PAGE_LOC = 2
-START_LOC = 3
-END_LOC = 4
-TIME_LOC = 5
-BODY_LOC = 6
+# [索引, 书名, 作者, 页码, 开始位, 结束位, 时间戳, 内容]
+
+INDEX_LOC = 0
+NAME_LOC = 1
+WRITER_LOC = 2
+PAGE_LOC = 3
+START_LOC = 4
+END_LOC = 5
+TIME_LOC = 6
+BODY_LOC = 7
 
 '''
 存储结构
 '''
 
 book_json = {
+    "index": 0,
     "name": "",
     "writer": "",
     "num": 0,
@@ -94,6 +98,12 @@ def get_book_message(text):
     book_name = first_line[:(writer_split - 2)
                            ].encode('utf-8').decode('utf-8-sig')
 
+    if not book_name in all_book_name:
+        all_book_name.append(book_name)
+        index = len(all_book_name) - 1
+    else:
+        index = all_book_name.index(book_name)
+
     second_line = re.search(r'(- [\s\S]+)(?=(\r|\n))', text).group()
     try:
         book_page = int(
@@ -127,6 +137,7 @@ def get_book_message(text):
 
     body = re.search(r'(.*)$', text).group()
 
+    book_data.insert(INDEX_LOC, index)
     book_data.insert(NAME_LOC, book_name)
     book_data.insert(WRITER_LOC, first_line[writer_split:-1])
     book_data.insert(PAGE_LOC, book_page)
@@ -137,21 +148,32 @@ def get_book_message(text):
     all_book_data.append(book_data)
 
 
+'''
 def get_all_book_name(all_book_data):
     resultList = []
     for item in all_book_data:
         if not item[0] in resultList:
             resultList.append(item[0])
     return resultList
+'''
 
+def sort_with_start_loc(all_book_data):
+    all_book_data.sort(key=lambda x:x[START_LOC])
 
 def output_json(all_book_name):
     for i in range(len(all_book_name)):
-        count = 0
+        count = 0  # 当前书籍条目计数器
         current_book_json = copy.deepcopy(book_json)
+        current_book_json['index'] = i
         current_book_json['name'] = all_book_name[i]
+
+        for k in range(len(all_book_data)):
+            if all_book_data[k][0] == i:
+                current_book_json['writer'] = all_book_data[k][WRITER_LOC]
+                continue
+
         for j in range(len(all_book_data)):
-            if all_book_data[j][0] == all_book_name[i]:
+            if all_book_data[j][0] == i:
                 current_note_json = copy.deepcopy(note_json)
                 current_note_json['page'] = all_book_data[j][PAGE_LOC]
                 current_note_json['content_start'] = all_book_data[j][START_LOC]
@@ -159,8 +181,6 @@ def output_json(all_book_name):
                 current_note_json['time'] = all_book_data[j][TIME_LOC]
                 current_note_json['body'] = all_book_data[j][BODY_LOC]
                 current_book_json['note'].append(current_note_json)
-                # TODO: 解决重复赋值问题
-                current_book_json['writer'] = all_book_data[j][WRITER_LOC]
                 count += 1
         current_book_json['num'] = count
         all_book_list.append(current_book_json)
@@ -176,6 +196,7 @@ if __name__ == '__main__':
     '''
     work_path = os.getcwd()
     clip_path = sys.argv[1]
+    all_book_name = []  # 存储所有数据的名称
     all_book_data = []  # 存储所有书目的原始数据
     all_book_list = []  # 存储所有数目的 json 数据
     ticks = int(time.time())
@@ -202,7 +223,7 @@ if __name__ == '__main__':
     for i in range(len(clip)):
         get_book_message(clip[i])
 
-    all_book_name = get_all_book_name(all_book_data)
+    sort_with_start_loc(all_book_data)
 
     '''
     Output
