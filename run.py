@@ -3,7 +3,7 @@
 @version: 2.0
 @Author: Chandler Lu
 @Date: 2020-03-14 15:54:28
-@LastEditTime: 2020-03-17 22:05:05
+@LastEditTime: 2020-05-06 08:12:09
 '''
 # -*- coding: utf-8 -*-
 
@@ -15,7 +15,6 @@ import time
 import re
 import json
 import copy
-import json2md as jmd
 
 '''
 宏定义
@@ -157,8 +156,10 @@ def get_all_book_name(all_book_data):
     return resultList
 '''
 
+
 def sort_with_start_loc(all_book_data):
-    all_book_data.sort(key=lambda x:x[START_LOC])
+    all_book_data.sort(key=lambda x: x[START_LOC])
+
 
 def output_json(all_book_name):
     for i in range(len(all_book_name)):
@@ -188,6 +189,46 @@ def output_json(all_book_name):
     with open(os.path.join(work_path, str(ticks), 'book-' + str(ticks) + '.json'), 'w') as f:
         print(json.dumps(all_book_list), file=f)
         # print(json.dumps(all_book_list, ensure_ascii=False), file=f)
+
+
+def json_to_md(work_path, ticks):
+    book_md = ''
+    with open(os.path.join(work_path, str(ticks), 'book-' + str(ticks) + '.json'), 'r') as f:
+        book_json = json.load(f)
+    for i in range(len(book_json)):
+        name = book_json[i]['name']
+        writer = book_json[i]['writer']
+        # Windows 不支持的文件命名
+        file_name = re.sub(
+            r'(\\)|(\/)|(\:)|(\*)|(\?)|(\")|(\<)|(\>)|(\|)', '-', name)
+        '''
+        书名作者
+        '''
+        book_md = '# ' + name + '\n\n' + '## ' + writer + '\n\n'
+
+        for j in range(len(book_json[i]['note'])):
+            if book_json[i]['note'][j]['body'] != '':
+                book_md = book_md + str(time.strftime("%Y-%m-%d %a %H:%M", time.localtime(
+                    book_json[i]['note'][j]['time']))) + ' | '  # 时间
+                if book_json[i]['note'][j]['page'] != -1:
+                    book_md = book_md + 'P' + \
+                        str(book_json[i]['note'][j]['page']) + ' | '  # 页码
+                if book_json[i]['note'][j]['content_start'] != -1:
+                    book_md = book_md + '#' + \
+                        str(book_json[i]['note'][j]
+                            ['content_start']) + '-'  # 起始位置
+                if book_json[i]['note'][j]['content_end'] != -1:
+                    book_md = book_md + \
+                        str(book_json[i]['note'][j]
+                            ['content_end']) + '\n\n'  # 终止位置
+                else:
+                    book_md = book_md + '\n\n'
+                book_md = book_md + '**' + \
+                    book_json[i]['note'][j]['body'] + '**' + '\n\n'  # 正文
+            else:
+                continue
+        with open(os.path.join(work_path, str(ticks), file_name + '.md'), 'w') as f:
+            print(book_md, file=f)
 
 
 if __name__ == '__main__':
@@ -230,4 +271,4 @@ if __name__ == '__main__':
     '''
     os.mkdir(os.path.join(work_path, str(ticks)))
     output_json(all_book_name)
-    jmd.json_to_md(work_path, ticks)
+    json_to_md(work_path, ticks)
